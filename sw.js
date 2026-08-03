@@ -1,6 +1,5 @@
 const CACHE_NAME = 'levantamiento-v1.0.0';
 
-// Archivos exactos que se guardarán para funcionar offline
 const urlsToCache = [
     './',
     './index.html',
@@ -8,44 +7,53 @@ const urlsToCache = [
     './app.js',
     './leaflet.css',
     './leaflet.js',
-    './manifest.json'
+    './manifest.json',
+    './novedades.json'
 ];
 
-// Instalación del Service Worker (Guarda los archivos en Caché)
+// Instalación: Guardar archivos base en caché
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Caché abierto. Guardando archivos...');
                 return cache.addAll(urlsToCache);
             })
+            .then(() => self.skipWaiting())
     );
 });
 
-// Interceptar peticiones (Si no hay internet, busca en el Caché)
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Devuelve el archivo del caché si existe, si no, lo pide a la red
-                return response || fetch(event.request);
-            })
-    );
-});
-
-// Actualización del caché (Elimina versiones viejas al sacar una nueva)
+// Activación: Limpiar cachés antiguas
 self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        console.log('Borrando caché antiguo:', cacheName);
+                    if (cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim())
+    );
+});
+
+// Interceptar peticiones (Estrategia Cache First, fallback a Red)
+self.addEventListener('fetch', event => {
+    // Si la petición es para una imagen local o datos que no son del caché estático, déjala pasar libremente
+    if (event.request.url.includes('data:image') || event.request.method !== 'GET') {
+        return;
+    }
+
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                if (response) {
+                    return response;
+                }
+                return fetch(event.request).catch(() => {
+                    // Si falla la red y no está en caché, evitamos que rompa la app
+                    return caches.match('./index.html');
+                });
+            })
     );
 });
