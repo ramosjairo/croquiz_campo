@@ -7,6 +7,7 @@ const CapaVisor = (() => {
     let capaImagenActual = null;
     let listaCasos = [];
     let imagenBaseObj = null;
+    let urlImagenActual = null;
 
     let modoActivo = false;
     let tipoSeleccionado = null;
@@ -61,9 +62,13 @@ const CapaVisor = (() => {
     };
 
     const cargarImagenFondo = (file) => {
-        // Utilizar URL.createObjectURL en lugar de FileReader es mucho más eficiente
-        // para imágenes grandes y evita problemas con data:image en navegadores móviles.
-        const urlObj = URL.createObjectURL(file);
+        // Limpieza de memoria: Revocar URL anterior si existe para evitar fugas de memoria en móvil
+        if (urlImagenActual) {
+            URL.revokeObjectURL(urlImagenActual);
+        }
+
+        // Crear una nueva URL temporal altamente eficiente
+        urlImagenActual = URL.createObjectURL(file);
         const img = new Image();
         
         img.onload = () => {
@@ -73,18 +78,22 @@ const CapaVisor = (() => {
             limpiarTodo();
             document.getElementById('mensaje-vacio').style.display = 'none';
 
-            capaImagenActual = L.imageOverlay(urlObj, limites).addTo(mapa);
+            // Obligamos a Leaflet a recalcular el tamaño del contenedor, vital en móviles y flexbox
+            mapa.invalidateSize();
+
+            capaImagenActual = L.imageOverlay(urlImagenActual, limites).addTo(mapa);
             mapa.fitBounds(limites);
             mapa.setMaxBounds(limites);
 
             document.getElementById('limpiarPinesBtn').disabled = false;
             document.getElementById('exportarImagenBtn').disabled = false;
-            
-            // Liberar memoria revocando la URL una vez que Leaflet la ha cargado
-            // Sin embargo, como el canvas de exportación la va a necesitar,
-            // no podemos revocarla inmediatamente, la mantenemos asociada a imagenBaseObj.src.
         };
-        img.src = urlObj;
+        
+        img.onerror = () => {
+            alert("No se pudo procesar la imagen seleccionada. Por favor intenta con otra.");
+        };
+
+        img.src = urlImagenActual;
     };
 
     const setTipoHerramienta = (herramienta) => {
@@ -336,8 +345,15 @@ const CapaVisor = (() => {
     return {
         init: () => {
             inicializarMapa();
-            document.getElementById('cargarImagenBtn').addEventListener('change', (e) => {
-                if (e.target.files[0]) cargarImagenFondo(e.target.files[0]);
+            
+            const inputImagen = document.getElementById('cargarImagenBtn');
+            inputImagen.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    cargarImagenFondo(e.target.files[0]);
+                    // Limpiar el valor del input permite que se pueda volver a seleccionar la misma imagen
+                    // en caso de haber un error o querer recargarla en dispositivos móviles.
+                    e.target.value = '';
+                }
             });
             document.getElementById('exportarImagenBtn').addEventListener('click', exportarImagenConPines);
             document.getElementById('limpiarPinesBtn').addEventListener('click', limpiarTodo);

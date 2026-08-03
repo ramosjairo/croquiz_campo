@@ -1,4 +1,4 @@
-const CACHE_NAME = 'levantamiento-v1.0.3';
+const CACHE_NAME = 'levantamiento-v1.0.2';
 
 const urlsToCache = [
     './',
@@ -7,9 +7,10 @@ const urlsToCache = [
     './app.js',
     './leaflet.css',
     './leaflet.js',
+    './manifest.json',
     './icon-192.png',
     './icon-512.png',
-    './manifest.json',
+    './logo.png',
     './novedades.json'
 ];
 
