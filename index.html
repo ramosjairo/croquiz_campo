@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Levantamiento Técnico de Campo</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e293b">
+
+    <!-- Librerías Locales (Offline) -->
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="leaflet.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- BARRA DE CONTROL PRINCIPAL -->
+    <header class="toolbar">
+        <div class="header-title">
+            <h2>📋 Levantamiento Técnico</h2>
+        </div>
+
+        <!-- BOTONES DE CATEGORÍAS Y COLORES -->
+        <div class="pin-selectors">
+            <button id="btnPinW1" class="btn-type btn-w1" onclick="CapaVisor.activarModo('W1')">
+                🧱 W1 <span id="cantW1" class="badge-count">0</span>
+            </button>
+            <button id="btnPinP1" class="btn-type btn-p1" onclick="CapaVisor.activarModo('P1')">
+                🏚️ P1 <span id="cantP1" class="badge-count">0</span>
+            </button>
+            <button id="btnPinP2" class="btn-type btn-p2" onclick="CapaVisor.activarModo('P2')">
+                📏 P2 <span id="cantP2" class="badge-count">0</span>
+            </button>
+            <button id="btnPinC" class="btn-type btn-c" onclick="CapaVisor.activarModo('C')">
+                🏛️ C <span id="cantC" class="badge-count">0</span>
+            </button>
+            <button id="btnPinS2" class="btn-type btn-s2" onclick="CapaVisor.activarModo('S2')">
+                💉 S2 <span id="cantS2" class="badge-count">0</span>
+            </button>
+        </div>
+
+        <!-- CONTROLES MODO DE HERRAMIENTA -->
+        <div class="tool-toggle">
+            <button id="btnModoPin" class="btn-herramienta activo" onclick="CapaVisor.setTipoHerramienta('pin')">📌 Pin</button>
+            <button id="btnModoLinea" class="btn-herramienta" onclick="CapaVisor.setTipoHerramienta('linea')">✏️ Línea</button>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="controls">
+            <label for="cargarImagenBtn" class="btn btn-primary">📷 Cargar Plano</label>
+            <input type="file" id="cargarImagenBtn" accept="image/*" style="display: none;">
+            <button id="exportarImagenBtn" class="btn btn-success" disabled>📥 Exportar</button>
+            <button id="limpiarPinesBtn" class="btn btn-danger" disabled>🗑️ Limpiar</button>
+        </div>
+    </header>
+
+    <!-- VISOR INTERACTIVO -->
+    <main id="mapa-container">
+        <div id="mensaje-vacio" class="overlay-mensaje">
+            <p>Carga el plano para comenzar el levantamiento.</p>
+        </div>
+        <div id="indicador-modo" class="indicador-colocacion oculto">
+            Modo Activo
+        </div>
+    </main>
+
+    <canvas id="canvas-exportacion" style="display: none;"></canvas>
+
+    <script src="app.js"></script>
+ 
+    <script>
+        // Registro del Service Worker para PWA Offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ Service Worker registrado con éxito.', reg.scope))
+                    .catch(err => console.log('❌ Error al registrar el Service Worker:', err));
+            });
+        }
+    </script>
+</html>

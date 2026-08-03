@@ -1,0 +1,169 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0f172a;
+}
+
+.toolbar {
+    background-color: #1e293b;
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 1000;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.header-title h2 { font-size: 16px; }
+
+/* Selectores de Tipo */
+.pin-selectors {
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.btn-type {
+    padding: 6px 10px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.btn-type.modo-activo {
+    opacity: 1;
+    transform: scale(1.05);
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Colores */
+.btn-w1 { background-color: #6b7280; } /* Paredes - Gris */
+.btn-p1 { background-color: #8b4513; } /* Escayola Grande - Marrón */
+.btn-p2 { background-color: #f97316; } /* Reparación Lineal - Naranja */
+.btn-c  { background-color: #ef4444; } /* Columna - Rojo */
+.btn-s2 { background-color: #a855f7; } /* Inyección Epóxico - Morado */
+
+.badge-count {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-size: 10px;
+}
+
+/* Toggle Modo Herramienta (Pin o Linea) */
+.tool-toggle {
+    display: flex;
+    background: #0f172a;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.btn-herramienta {
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.btn-herramienta.activo {
+    background: #3b82f6;
+    color: white;
+}
+
+.controls { display: flex; gap: 6px; }
+
+.btn {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.btn-primary { background-color: #3b82f6; color: white; }
+.btn-success { background-color: #10b981; color: white; }
+.btn-danger  { background-color: #ef4444; color: white; }
+.btn-success:disabled, .btn-danger:disabled { background-color: #475569; cursor: not-allowed; }
+
+/* Contenedor Leaflet */
+#mapa-container { flex: 1; position: relative; background-color: #0f172a; }
+
+.overlay-mensaje {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background: rgba(0,0,0,0.8);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 500;
+}
+
+.indicador-colocacion {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 500;
+}
+
+.indicador-colocacion.oculto { display: none; }
+
+/* Contenedor del Pin Customizado */
+.custom-svg-pin {
+    background: transparent;
+    border: none;
+    filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.5));
+}
+
+/* Tooltip nativo personalizado */
+.leaflet-tooltip.tooltip-estandar {
+    background-color: rgba(30, 41, 59, 0.95);
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+}
+
+/* Popups */
+.popup-acciones { display: flex; gap: 5px; margin-top: 6px; justify-content: center; }
+.btn-pop { padding: 4px 8px; border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; }
+.btn-pop-del { background-color: #ef4444; font-weight: bold; }
