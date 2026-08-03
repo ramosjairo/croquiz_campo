@@ -7,6 +7,8 @@ const urlsToCache = [
     './app.js',
     './leaflet.css',
     './leaflet.js',
+    './icon-192.png',
+    './icon-512.png',
     './manifest.json',
     './novedades.json'
 ];
