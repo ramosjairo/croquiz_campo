@@ -61,26 +61,30 @@ const CapaVisor = (() => {
     };
 
     const cargarImagenFondo = (file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                imagenBaseObj = img;
-                const limites = [[0, 0], [img.height, img.width]];
+        // Utilizar URL.createObjectURL en lugar de FileReader es mucho más eficiente
+        // para imágenes grandes y evita problemas con data:image en navegadores móviles.
+        const urlObj = URL.createObjectURL(file);
+        const img = new Image();
+        
+        img.onload = () => {
+            imagenBaseObj = img;
+            const limites = [[0, 0], [img.height, img.width]];
 
-                limpiarTodo();
-                document.getElementById('mensaje-vacio').style.display = 'none';
+            limpiarTodo();
+            document.getElementById('mensaje-vacio').style.display = 'none';
 
-                capaImagenActual = L.imageOverlay(e.target.result, limites).addTo(mapa);
-                mapa.fitBounds(limites);
-                mapa.setMaxBounds(limites);
+            capaImagenActual = L.imageOverlay(urlObj, limites).addTo(mapa);
+            mapa.fitBounds(limites);
+            mapa.setMaxBounds(limites);
 
-                document.getElementById('limpiarPinesBtn').disabled = false;
-                document.getElementById('exportarImagenBtn').disabled = false;
-            };
-            img.src = e.target.result;
+            document.getElementById('limpiarPinesBtn').disabled = false;
+            document.getElementById('exportarImagenBtn').disabled = false;
+            
+            // Liberar memoria revocando la URL una vez que Leaflet la ha cargado
+            // Sin embargo, como el canvas de exportación la va a necesitar,
+            // no podemos revocarla inmediatamente, la mantenemos asociada a imagenBaseObj.src.
         };
-        reader.readAsDataURL(file);
+        img.src = urlObj;
     };
 
     const setTipoHerramienta = (herramienta) => {

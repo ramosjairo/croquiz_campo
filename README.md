@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/30648754/README.md)
 # 📋 Sistema de Levantamiento Técnico de Campo (PWA)
 
 Herramienta web optimizada para dispositivos móviles y de escritorio, diseñada para realizar **levantamientos técnicos de campo, inspecciones y planimetría** de manera completamente offline.
